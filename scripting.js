@@ -1,21 +1,52 @@
-data=""
-fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => response.json())
-      .then(json => {data= json;
-        dosomething(data)})
+temps=[];
+years=[];
 
-
-const bob= document.getElementById('text');
-function dosomething(text){
-    for(let i = 0; i < data.length; i++){
-        text = data[i];
-    for(let x in text){
-        document.getElementById("text").innerHTML += " " +x +" :";
-        document.getElementById("text").innerHTML += " " +text[x]+ " ";
-        document.getElementById("text").innerHTML += "\n";
-
-    }
-    
-    }
-   
+async function getData(){
+    const response = await
+    fetch("NASA.csv");
+    const data = await response.text();
+    const rows = data.split("\n").slice(1);
+    rows.forEach((elem) => {
+        const row = elem.split(",");
+        years.push(row[0])
+        temps.push(Number(row[1])+14);
+    });
+    makeChart(temps, years)
 }
+
+
+
+function makeChart(temp, year){
+    const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: years,
+      datasets: [{
+        label: 'Temperature per year',
+        data: temp,
+        borderWidth: 1,
+        backgroundColor:'#FFC0CB'
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: false
+        }
+      },
+      plugins: {
+        legend: {
+            labels: {
+                font: {
+                    size: 40
+                }
+            }
+        }
+      }
+    }
+  });
+}
+
+getData(); 
